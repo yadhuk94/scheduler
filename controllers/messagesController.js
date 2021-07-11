@@ -32,9 +32,10 @@ exports.scheduler = async (req, res) => {
         });
       }
 
-      await Scheduler.create({ date: jobDate, message });
+      const schedule = await Scheduler.create({ date: jobDate, message });
 
       cron.scheduleJob(jobDate, async () => {
+        await Scheduler.findByIdAndUpdate(schedule._id, { jobCompleted: true });
         await Messages.create({ date: new Date(), message });
       });
 
